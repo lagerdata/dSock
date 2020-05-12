@@ -6,11 +6,12 @@ services:
       dockerfile: api/Dockerfile
       context: .
       target: development
+    env_file: api.env
     volumes:
       - .:/app
       - /app/api/build/
     ports:
-      - 3000:80
+      - "${DSOCK_API_PORT:-3000}:80"
     depends_on:
       - redis
   worker:
@@ -22,10 +23,10 @@ services:
       - .:/app
       - /app/worker/build/
     ports:
-      - 3001:80
+      - "${DSOCK_WORKER_PORT:-3001}:80"
     depends_on:
       - redis
   redis:
     image: redis:alpine
     ports:
-      - 3002:6379
+      - "${DSOCK_REDIS_PORT:-3002}:6379"
