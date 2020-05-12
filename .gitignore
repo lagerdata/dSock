@@ -1,2 +1,10 @@
 build
 gin-bin
+*env
+.venv
+
+.vscode/*
+*.code-workspace
+
+
+
