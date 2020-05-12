@@ -101,7 +101,7 @@ func connectHandler(c *gin.Context) {
 	go func() {
 	ReceiveLoop:
 		for {
-			messageType, _, err := conn.ReadMessage()
+			messageType, messageBody, err := conn.ReadMessage()
 
 			if err != nil {
 				// Disconnect on error
@@ -122,6 +122,12 @@ func connectHandler(c *gin.Context) {
 				fallthrough
 			case websocket.PongMessage:
 				redisClient.HSet(connId, "lastPing", time.Now().Format(time.RFC3339))
+				break
+			// Handle incoming data from client
+			case websocket.TextMessage, websocket.BinaryMessage:
+				// TODO: send this data to redis so it propagates back to
+				// server and all clients
+				_ = conn.WriteMessage(messageType, messageBody)
 				break
 			}
 
